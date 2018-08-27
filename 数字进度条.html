@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>jsprogess数字进度条</title>
+<style type="text/css">
+*{margin:0;padding:0;list-style:none;outline:none;}
+a,a img{text-decoration:none; border:none;}
+a:link{cursor:pointer;}
+a:hover{text-decoration:none;}
+a:active,a:visited{}
+a:focus,input[type=button],input[type=submit]{outline:none;}
+/*--------------------common↑------------------------------*/
+body{font-size:12px;font-family:"microsoft YaHei","Simsun",Verdana,Arial,Helvetica; color:#241917;}
+.numstr_box{height:20px;padding:10px;}
+.business{display:block;padding-top:5px;}
+.business li{display:block; height:20px;padding:15px 0;}
+.business li span{font:16px/20px 'Microsoft YaHei';color:#333; float:left;}
+.business li span em{font-family:arial;font-size:18px;margin-right:5px;}
+.pro{width:51%; height:18px;margin:0 5% 0 3%;background:#ececec;border:1px solid #cbcbcb;float:left;position:relative;overflow:hidden;}
+.ping{height:18px;background:#7bc054;position:absolute;top:0px;left:0px;-webkit-transition:background 150ms ease-out;transition:background 150ms ease-out;}
+.p1{background:#c0547b;}
+.p2{background:#c06254;}
+.p3{background:#7bc054;}
+.p4{background:#54b1c0;}
+.p5{background:#ff6600;}
+.p6{background:#547bc0;}
+.p7{background:purple;}
+em.pring_text{font:normal 12px/18px 'Arial'; color:#000;float:right;margin-right:5px;position:relative;z-index:100;}
+</style>
+</head>
+<body>
+<div class="numstr_box" style="height:86%;">
+     <ul class="business">
+         <li>
+             <span>登记</span>
+             <div class="pro">
+                  <div class="ping" id="p1" style="width:0%"></div>
+             </div>
+             <span><em>2000</em>(条)</span>
+         </li>
+         <li>
+             <span>处罚</span>
+             <div class="pro">
+                  <div class="ping" id="p2" style="width:0%"></div>
+             </div>
+             <span><em>2300</em>(条)</span>
+         </li>
+         <li>
+             <span>监管</span>
+             <div class="pro">
+                  <div class="ping" id="p3" style="width:0%"></div>
+             </div>
+             <span><em>2700</em>(条)</span>
+         </li>
+         <li>
+             <span>抽查</span>
+             <div class="pro">
+                  <div class="ping" id="p4" style="width:0%"></div>
+             </div>
+             <span><em>1600</em>(条)</span>
+         </li>
+         <li>
+             <span>督导</span>
+             <div class="pro">
+                  <div class="ping" id="p5" style="width:0%"></div>
+             </div>
+             <span><em>1800</em>(条)</span>
+         </li>
+         <li>
+             <span>建议</span>
+             <div class="pro">
+                  <div class="ping" id="p6" style="width:0%"></div>
+             </div>
+             <span><em>2200</em>(条)</span>
+         </li>
+         <li>
+             <span>执法</span>
+             <div class="pro">
+                  <div class="ping" id="p7" style="width:0%"></div>
+             </div>
+             <span><em>1900</em>(条)</span>
+         </li>
+
+     </ul>
+</div>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+   /*--进度、数字百分比计算☆--*/  
+  (function Proging(){
+      var lenp = $(".ping").length; 
+      var arrdata = new Array(),
+          arrColor = ['#c0547b', '#c06254', '#7bc054', '#54b1c0', '#ff6600', '#547bc0', 'purple']; 
+
+      function progin(n){
+        var data = $("#p"+n).parent().next('span').find('em').text();    
+        arrdata.push(data);  //console.log(JSON.parse(JSON.stringify(arrdata)));
+      }
+      var i =1;
+      for(; i <= lenp; ){ 
+          progin(i);
+          i++;
+      } 
+
+      var maxdata = '';//最大值
+          maxdata = arrdata[0];
+      for(var j = 1; j < arrdata.length; j++){ 
+          if( maxdata < arrdata[j]){
+              maxdata = arrdata[j];  
+          } 
+      } 
+      //console.log(maxdata);
+
+      function progim(m){  
+      	  var  data = $("#p"+m).parent().next('span').find('em').text();
+      	  var _w = Math.round([data/maxdata]*100);
+      	  //进度条animation
+      	  $("#p"+m).animate({"width": _w +"%"}, 500, function(){  
+              $(this).attr("title", _w +"%");
+      		    $(this).after('<em class="pring_text">'+_w +'%</em>');
+      	  });
+          //随机添加颜色  
+          var rand= parseInt(Math.random()*lenp);       console.log(rand);
+          //$("#p"+m).css({"background": arrColor[m-1]});
+          $("#p"+m).css({"background": arrColor[rand]});
+          
+      }
+
+      //递归循环(animate展示)
+      var k=0;
+      var int = setInterval(function(){
+            progim(k);
+            k++; 
+            k >= lenp+1 ? clearInterval(int) : k;
+        }, 100);
+
+      //for循环(animate展示)
+      /*for(var k=1; k<=lenp; k++){
+          console.log('循环animate展示第 '+ k +' 个');
+          progim(k); 
+      }*/
+
+      //循环点击
+      var thumb = $(".pro");
+      for(var n =1; n <= thumb.length; n++){ 
+          (function(n){ //这个闭包是function里的n
+              $(thumb[n-1]).on("click", function(){ 
+                  console.log("点击第"+ n +"个");
+                  alert("宽度：" + $(this).children("div").width() + 
+                        "\n数量："+ $(this).next("span").children("em").text() +
+                        "\n占比："+ $(this).children("div").attr("title")+
+                        "\n颜色："+ $(this).children("div").css("background-color")
+                        );
+              });
+          })(n);//这是循环中的n,被作为参数传入
+      }
+      /**闭包循环中:
+        n在循环完成的时候被赋值了,而每个click都被赋值了同一个function;
+        利用闭包把每个function里的n都变成不同的n,
+        for循环中的function自调用,将循环中的n作为参数传入function中,
+        此时,function中的n已经不是循环中的n了（这里有点绕，其实是形参n, 即function里的n换成什么变量名都行,
+        而是在内存中开辟了一个内存空间存储了作为参数传进来的n的值,
+        这样function中的就不会随着循环中的n的值的改变而改变了,
+        就可以打印出你要的结果了
+      **/
+
+  })();
+
+  //定时循环
+  var i = 1;
+  function loop(n){
+    ++i;
+    /*if(i >= n) {
+       i=1;
+    }*/
+    i >= n ? i=1 : i;
+    return i;
+  }
+  setInterval(function(){
+    loop(5);
+    console.log(i);
+  }, 1000);
+   
+/*-------jquery end-------*/
+});		
+</script>
+</body>
+</html>
