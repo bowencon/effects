@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="renderer" content="webkit" />
+<title>css3SVG轨迹动画</title>
+<style type="text/css">
+*{margin:0;padding:0;list-style:none;outline:none;}
+a,a img{text-decoration:none; border:none;}
+a:link{cursor:pointer;}
+a:hover{text-decoration:none;}
+a:active,a:visited{}
+a:focus,input[type=button],input[type=submit]{outline:none;}
+/*--------------------common↑------------------------------*/
+.viewbox{width:300px; height:120px; border:1px dotted #efefef; position:relative;}
+.marker{fill:orange;}
+.blue{ fill:#1a7fff; fill-rule:evenodd;
+     offset-path: path('M8,56 C8,33.90861 25.90861,16 48,16 C70.09139,16 88,33.90861 88,56 C88,78.09139 105.90861,92 128,92 C150.09139,92 160,72 160,56 C160,40 148,24 128,24 C108,24 96,40 96,56 C96,72 105.90861,92 128,92 C154,93 168,78 168,56 C168,33.90861 185.90861,16 208,16 C230.09139,16 248,33.90861 248,56 C248,78.09139 230.09139,96 208,96 L48,96 C25.90861,96 8,78.09139 8,56 Z');
+    -webkit-animation:move 5s linear infinite;
+    animation:move 5s linear infinite;  
+}
+.red{width:1em; height:1em; background:red; border-radius:100%; position:absolute; top:0;left:0;
+    offset-path: path('M8,56 C8,33.90861 25.90861,16 48,16 C70.09139,16 88,33.90861 88,56 C88,78.09139 105.90861,92 128,92 C150.09139,92 160,72 160,56 C160,40 148,24 128,24 C108,24 96,40 96,56 C96,72 105.90861,92 128,92 C154,93 168,78 168,56 C168,33.90861 185.90861,16 208,16 C230.09139,16 248,33.90861 248,56 C248,78.09139 230.09139,96 208,96 L48,96 C25.90861,96 8,78.09139 8,56 Z');
+    offset-distance: 0%;
+    -webkit-animation:move 6s linear infinite;
+    animation:move 6s linear infinite;
+}
+@-webkit-keyframes move{
+    100%{ 
+        offset-distance: 100%;
+    }
+}
+@keyframes move{
+    100%{ 
+        offset-distance: 100%;
+    }
+}
+
+/*-渐变文字*/
+.colorful{ display:inline-block; width:270px; padding:20px;  margin: 10px;  }
+.colorful a{color: #E16132; line-height:2; margin-right: 5px;text-decoration: none;padding: 3px 0;}
+ @supports (-webkit-transform: scale(0)) { 
+.colorful {
+    /*-webkit-mask-image: linear-gradient(to right, red, orange, yellow, green, cyan, blue, purple);*/
+    background-image: linear-gradient(to right, red, orange, yellow, green, yellow, orange, red, orange, yellow, green, yellow, orange, red);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-size: 200% 100%;
+    animation: grad 5s infinite linear;
+  }
+}
+@-webkit-keyframes grad{
+    0%  { background-position: 0 0;}
+    100% { background-position: -100% 0;}
+}
+
+.colorful a:hover{color:#f30; text-decoration:none; 
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4'%3E%3Cpath fill='none' stroke='%23ff3300' d='M0 3.5c5 0 5-3 10-3s5 3 10 3 5-3 10-3 5 3 10 3'/%3E%3C/svg%3E") repeat-x 0 100%; 
+  background-size:20px auto; 
+  animation:waveMove 1s infinite linear;
+}
+@keyframes waveMove {
+  from { background-position:0 100%; }
+  to { background-position:-20px 100%; }
+}
+
+/* 变化的柱形图 */
+.dotbox{width:180px;height:100px; position:absolute; top:20px;right:30px; border:1px dotted #afafaf;}
+.dot1, .dot2, .dot3{ width:20px; float:left;margin-left:30px; position:relative; border-radius:5px 5px 0 0; transition:.4s all; animation-play-state:running;/*paused*/ }
+.dot1{background:#ff6600; animation:animated-ha 3s linear infinite; }
+.dot2{background:yellowgreen; animation:animated-hb 4s linear infinite; }
+.dot3{background:#049ec4; position:absolute; right:30px; bottom:0; animation:animated-hc 2.5s linear infinite; }
+@keyframes animated-ha{
+  0%, 100%{
+    height:30px;
+    bottom:-70px; 
+  }
+  50%{  
+    height:70px; 
+    bottom:-30px; 
+  }
+}
+@keyframes animated-hb{
+  0%, 100%{
+    height:10px;
+    bottom:-90px; 
+  }
+  50%{  
+    height:90px; 
+    bottom:-10px; 
+  }
+} 
+@keyframes animated-hc{
+  0%, 100%{
+    height:30px;
+  }
+  50%{  
+    height:60px; 
+  }
+} 
+</style>
+</head>
+<body>
+  <div class="viewbox">
+     <svg width="256" height="112" viewBox="0 0 256 112" id="svgName">
+        <path id="pathName" fill="none" stroke="#ddd" d="M8,56 C8,33.90861 25.90861,16 48,16 C70.09139,16 88,33.90861 88,56 C88,78.09139 105.90861,92 128,92 C150.09139,92 160,72 160,56 C160,40 148,24 128,24 C108,24 96,40 96,56 C96,72 105.90861,92 128,92 C154,93 168,78 168,56 C168,33.90861 185.90861,16 208,16 C230.09139,16 248,33.90861 248,56 C248,78.09139 230.09139,96 208,96 L48,96 C25.90861,96 8,78.09139 8,56 Z"/>
+        <circle cx="0" cy="0" r="8" class="marker">
+            <!-- 使形状元素沿着动作路径移动 dur="持续时间" repeatCount="动画时间将发生"-->
+            <animateMotion dur="8s" repeatCount="indefinite">
+                <mpath xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#pathName"></mpath>
+            </animateMotion>
+        </circle>
+        <path class="blue" d="M512.97,587h5.091L524,597.5,518.061,608H512.97l5.939-10.5Zm-8.485,0h5.091l5.939,10.5L509.576,608h-5.091l5.939-10.5ZM504,597l-2,1" transform="translate(-512 -597)"/>
+      </svg>
+      <div class="red"></div>
+  </div>
+  
+  <br><br>
+
+  <p class="colorful ovh">
+      <a href="#" class="btn" target="_blank" rel="nofollow">签名版</a>
+      <a href="#" class="btn" target="_blank" rel="nofollow">京东自营</a>
+      <a href="#" class="btn" target="_blank" rel="nofollow">当当自营</a>
+      <a href="#" class="btn" target="_blank" rel="nofollow">亚马逊</a>
+      <a href="#" class="btn" target="_blank" rel="nofollow">异步社区（有电子版）</a>
+  </p>
+
+  <div class="dotbox">
+    <div class="dot1"></div>
+      <div class="dot2"></div>
+      <div class="dot3"></div>
+  </div>
+
+</body>
+</html>
