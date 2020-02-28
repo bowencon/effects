@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="renderer" content="webkit" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Access-Control-Allow-Origin" content="*">
+<title>line</title>
+<style type="text/css">
+*{ margin:0; padding:0; list-style:none; outline:none;}
+html,body{ font-family:"microsoft YaHei","Simsun",Arial,Verdana; color:#666666; background:#fff;}
+h1,h2,h3,h4,h5,h6,b,em{font-size:12px; font-weight:400;}
+ul,li,form{ margin:0; padding:0;}
+a,a img{ text-decoration:none; border:none;}
+a:link{ color:#666; cursor:pointer;}
+a:hover{ color:#666;}
+a:active{ color:#666;}
+a:visited{ color:#666;}
+table{border-collapse:collapse; /*table-layout:fixed;*/ }
+/*--------------------通用类设置--------------------------------*/
+.charts{width:calc(100% - 1em);height:calc(300px + 2em); margin-bottom:1em;}
+</style>
+</head>
+<body>
+
+<div class="charts" id="main1"></div>
+<div class="charts" id="main2"></div>
+<div class="charts" id="main3"></div>
+
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://gallerybox.echartsjs.com/dep/echarts/latest/echarts.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	var t1 = new Date().getTime();
+
+	//声明jsonp请求函数
+	function jsonp(url, callback, callbackname){ //给系统中创建一个全局变量，叫做callbackname，指向callback函数名
+    	//定义一个处理Jsonp返回数据的回调函数
+		window[callbackname] = callback;
+		//创建一个script节点
+		var script = document.createElement("script");
+			script.src = url;
+			script.type = "text/javascript";		
+		//document.head.appendChild(script);   	
+    	document.getElementsByTagName("body")[0].appendChild(script); //将创建的新节点添加到BOM树上  
+		setTimeout(function(){
+			document.body.removeChild(script); //为了不污染页面，把script拿掉
+		}, 500);
+	}
+    
+    var jsonpURL = 'https://m.look.360.cn/events/feiyan?sv=&version=&market=&device=2&net=4&stype=&scene=&sub_scene=&refer_scene=&refer_subscene=&f=jsonp&location=true&_=1581415263297&callback=jsonp1';
+	//调用jsonp函数发送jsonp请求的callback
+	jsonp(jsonpURL, function(data){
+		console.log(data);
+		console.log("数据来源："+"%c"+"https://m.look.360.cn", "color:green");
+	},"jsonp1");
+
+
+	//声明json生成时间
+	const mydate = new Date();
+	var jsonMonth = mydate.getMonth()+1,
+		jsonDay = mydate.getDate()-1;
+    jsonMonth < 10 ? jsonMonth = "0"+jsonMonth : jsonMonth = jsonMonth;
+    jsonDay < 10 ? jsonDay = "0"+jsonDay : jsonDay = jsonDay;
+	var jsonDate = mydate.getFullYear().toString() + jsonMonth + jsonDay;
+	console.log(jsonDate)
+	/*var linkJSON = 'https://ncportal.esrichina.com.cn/JKZX/yq_20200211.json' */
+    var linkJSON = 'https://ncportal.esrichina.com.cn/JKZX/yq_'+jsonDate+'.json';
+    //原生json请求
+    //window.onload = function () {
+        var url = linkJSON,                 //json文件url
+        	request = new XMLHttpRequest();
+        request.open("get", url);           //设置请求方法与路径
+        request.send(null);                 //不发送数据到服务器
+        request.onload = function() {       //XHR对象获取到返回信息后执行
+            if (request.status == 200) {    //返回状态为200，即为数据获取成功
+                var data = JSON.parse(request.responseText);  
+                //console.log(JSON.parse(JSON.stringify(data)));  
+		        var chartsJSON = data.features; // 发送请求成功后开始执行，data是请求成功后，返回的数据
+	            console.log(chartsJSON);
+	            var provinces = [],    //省份   
+	            	newDiagnosed = [], //新增确诊
+	            	newSuspected = [], //新增疑似
+	            	newDied = [], 	   //新增死亡
+				    diagnosed = [],    //累计确诊
+				    suspected = [],    //累计疑似
+				    died = [];         //累计死亡
+				
+				// 取出每一条数据value,作为显示数据
+				chartsJSON.forEach(function(items, index) { 
+					//console.log(items.properties);
+				    provinces.push(items.properties.省份);
+				    newDiagnosed.push(items.properties.新增确诊);
+				    newSuspected.push(items.properties.新增疑似);
+				    newDied.push(items.properties.新增死亡);
+				    diagnosed.push(items.properties.累计确诊);
+				    suspected.push(items.properties.累计疑似);
+				    died.push(items.properties.累计死亡);
+				});  
+
+				//数组求和
+				var sumNewDiagnosed = eval(newDiagnosed.join("+")),
+					sumNewSuspected = eval(newSuspected.join("+")),
+					sumNewDied = eval(newDied.join("+")),
+					sumDiagnosed = eval(diagnosed.join("+")),
+					sumSuspected = eval(suspected.join("+")),
+					sumDied = eval(died.join("+"));
+				console.log("数据来源："+"%c"+"来自国家卫健委和各省卫健委通报", "color:green");	
+				console.log("新增确诊："+"%c"+sumNewDiagnosed,"color:rgb(224, 32, 32)");
+				console.log("新增疑似："+"%c"+sumNewSuspected,"color:#ff6600");
+				console.log("新增死亡："+"%c"+sumNewDied,"color:rgb(84,151,211)");
+				console.log("全国累计确诊："+"%c"+sumDiagnosed,"color:#f56262");
+				console.log("全国累计疑似："+"%c"+sumSuspected,"color:#e8b77d");
+				console.log("全国累计死亡："+"%c"+sumDied,"color:gray");
+            }
+        }
+    //}
+    
+    
+    var linkURL = 'https://arena.360.cn/api-static/ncov-map.json';
+	//ajax方法
+	$.ajax({
+        type: 'GET',    // 这是请求的方式,可以是GET方式(链接)也可以是POST方式(区域), 默认是GET
+        url: linkURL,   // 这是请求的连接地址 一般情况下这个地址是后台给前端的一个连接，直接写就可以
+        dataType: 'json',  // 这是后台返回的数据类型 一般情况下都是一个json数据,前端遍历一下就OK
+		async: true,    // true,false 默认为true异步请求，注同步请求将锁死浏览器等待请求结束才执行其他操作
+		cache:false,    //是否缓存
+        timeout: 8000,  // 设置请求超时时间（毫秒）
+		contentType: "text/html; application/json; utf-8", //内容类型
+		jsonp: "callback",    //服务端用于接收callback调用的function名的参数
+    	jsonpCallback:"json", //callback后的function名称 
+        headers: {            //请求头
+        	//Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"
+        	Accept: "application/json, text/plain, */*"
+        },
+        beforeSend: function () {
+                // 在发送请求前就开始执行 （一般用来显示loading图）
+        },
+        success: successFunc, //成功执行方法
+        complete: function () {
+                //当请求完成后开始执行，无论成功或是失败都会执行 （一般用来隐藏loading图）
+        },
+        error: function (xhr, textStatus, errorThrown) {
+                //  请求失败后就开始执行，请求超时后，在这里执行请求超时后要执行的函数
+        }
+	}).done(function () {
+	        // 这个函数是在ajax数据加载完之后，对数据进行的判断，在涉及到对ajax数据进行操作无效时，在这个函数里面写是可以起到效果的
+	});
+
+	// 发送请求成功后开始执行，data是请求成功后，返回的数据
+	function successFunc(data) {  console.log(data)
+        var chartsJSON = JSON.parse(JSON.stringify(data.details)); 
+        
+        var provinces = [],	//省份
+		    diagnosed = [], //确诊
+		    suspected = [],	//疑似
+		    cured = [],		//治愈
+		    died = [];		//死亡
+		
+		function sortNum(a, b) {
+		    return a.diagnosed - b.diagnosed
+		} 
+		//chartsJSON.sort(sortNum).reverse(); //排序
+		[].slice.call(chartsJSON.sort(sortNum).reverse()); console.log(chartsJSON)
+
+		// 取出每一条数据value,作为显示数据
+		chartsJSON.forEach(function(items, index) { 
+		    provinces.push(items.name);
+		    diagnosed.push(items.diagnosed);
+		    suspected.push(items.suspected);
+		    cured.push(items.cured);
+		    died.push(items.died);
+		    
+		    /*sum += Math.abs(items.name); console.log(sum)*/
+		});
+
+		//数组求和
+		/*var sumDiagnosed = eval(diagnosed.join("+")),
+			sumSuspected = eval(suspected.join("+")),
+			sumCured = eval(cured.join("+")),
+			sumDied = eval(died.join("+"));	
+		*/
+
+		//累计总和
+		var sumDiagnosed = JSON.stringify(data.total.diagnosed),
+			sumSuspected = JSON.stringify(data.total.suspected),
+			sumCured = JSON.stringify(data.total.cured),
+			sumDied = JSON.stringify(data.total.died);
+
+		//较昨日新增
+		var ydDiagnosed = JSON.stringify(data.total.diff.diagnosed),
+			ydSuspected = JSON.stringify(data.total.diff.official.suspected),
+			ydCured = JSON.stringify(data.total.diff.cured),
+			ydDied = JSON.stringify(data.total.diff.died);
+
+		console.log("数据来源："+"%c"+"https://arena.360.cn", "color:green");	
+		console.log("全国累计确诊："+"%c"+sumDiagnosed,"color:rgb(255, 53, 55)");
+		console.log("全国累计疑似："+"%c"+sumSuspected,"color:#ff6600");
+		console.log("全国累计治愈："+"%c"+sumCured,"color:rgb(17, 191, 199)");
+		console.log("全国累计死亡："+"%c"+sumDied,"color:rgba(77, 80, 84, 0.7)");
+
+		//调用图表展示
+		setTimeout(function(){
+		   /*var subDay = mydate.getDate();
+		   subDay < 10 ? subDay = "0"+subDay : subDay = subDay;
+		   var subDate = mydate.getFullYear() + "年"+ jsonMonth +"月"+ subDay +"日";*/
+		   var subDate = data.total.updated_at;
+		   //console.log(subDate)
+		   var subFunc = [
+		   		'截止: '+subDate+'\n'+
+		   		'累计确诊: {a| '+sumDiagnosed+'}','累计疑似: {b| '+sumSuspected+'}','累计治愈: {c| '+sumCured+'}','累计死亡: {d| '+sumDied+'}'+'\n'+
+		   		'\xa0较昨日: {e|+'+ydDiagnosed+'}'+
+		   		'\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0较昨日: {f|+'+ydSuspected+'}'+
+		   		'\xa0\xa0\xa0\xa0\xa0\xa0\xa0较昨日: {h|+'+ydCured+'}'+
+		   		'\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0较昨日: {i|+'+ydDied+'}'
+		   		].join('\xa0\xa0');
+		   initCharts("main1", "全国各地区疫情趋势图", subFunc, provinces, diagnosed, suspected, cured, died);
+		}, 500);
+        
+	}
+
+
+	//数据 m.look.360.cn
+    var linkJSONP = 'https://m.look.360.cn/events/feiyanTrend?sv=&version=&market=&device=2&net=4&stype=&scene=&sub_scene=&refer_scene=&refer_subscene=&f=jsonp&_=1581415263299&callback=jsonp2';
+    $.ajax({
+        type: 'GET',    
+        url: linkJSONP,   // 这是请求的连接地址 一般情况下这个地址是后台给前端的一个连接，直接写就可以
+        dataType: 'jsonp',  // 这是后台返回的数据类型 一般情况下都是一个json数据,前端遍历一下就OK
+		async: true,    
+		cache:false,    
+        timeout: 8000,  
+		contentType: "text/html; application/json; utf-8", //内容类型
+		jsonp: "callback",    //服务端用于接收callback调用的function名的参数
+    	jsonpCallback:"jsonp2", //callback后的function名称 
+        headers: { //请求头
+        	Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"
+        },
+        beforeSend: function () {
+            // 在发送请求前就开始执行 （一般用来显示loading图）
+        },
+        success: function (data) { //console.log(JSON.parse(JSON.stringify(data.data))); 
+            //成功执行方法
+	        var chartsJSON = data.data.timeline; // 发送请求成功后开始执行，data是请求成功后，返回的数据
+	        console.log(chartsJSON);
+			var date = [],		//日期
+			    diagnosed_add = [], //新增确诊
+			    suspected_add = [], //新增疑似
+			    cured_add = [],     //新增治愈
+			    died_add = [];      //新增死亡
+
+			function sortNum(a, b) {
+			    return a.diagnosed - b.diagnosed
+			} 
+			chartsJSON.reverse(); //排序
+
+			//for循环chartsJSON
+			for (var i = 0; i < chartsJSON.length-1; i++) {
+				date.push(chartsJSON[i].total.dateTime);
+			    diagnosed_add.push(chartsJSON[i].total.diagnosed_add);
+			    suspected_add.push(chartsJSON[i].total.suspected_add);
+			    cured_add.push(chartsJSON[i].total.cured_add);
+			    died_add.push(chartsJSON[i].total.died_add);
+			};
+
+			//调用图表展示
+			setTimeout(function(){
+				var subDay = mydate.getDate()-1; //当前减去一天
+			    subDay < 10 ? subDay = "0"+subDay : subDay = subDay;
+			    var subDate = mydate.getFullYear() + "年"+ jsonMonth +"月"+ subDay +"日";
+			    var subFunc = '截止: '+subDate;
+			    initCharts("main2", "疫情新增趋势图", subFunc, date, diagnosed_add, suspected_add, cured_add, died_add);
+			}, 500);
+        },
+        complete: function () {
+            //当请求完成后开始执行，无论成功或是失败都会执行 （一般用来隐藏loading图）
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            //  请求失败后就开始执行，请求超时后，在这里执行请求超时后要执行的函数
+        }
+	}).done(function () {
+	        // 这个函数是在ajax数据加载完之后，对数据进行的判断，在涉及到对ajax数据进行操作无效时，在这个函数里面写是可以起到效果的
+	});
+
+    
+    var linkURL2 = 'https://arena.360.cn/api-static/ncov-tl-sorted.json';
+    //getJSON方法
+	$.getJSON(linkURL2, function(data){ //没有提供“Access-Control-Allow-Origin”的头所请求的资源。起源“零”因此不允许访问
+        //console.log(JSON.parse(JSON.stringify(data)));  
+        var chartsJSON = data; // 发送请求成功后开始执行，data是请求成功后，返回的数据
+        console.log(chartsJSON);
+		var date = [],		//日期
+		    diagnosed = [], //确诊
+		    suspected = [], //疑似
+		    cured = [],     //治愈
+		    died = [];      //死亡
+
+		// 取出每一条数据value,作为显示数据
+		chartsJSON.forEach(function(items, index) { 
+		    date.push(items.date);
+		    diagnosed.push(items.diagnosed);
+		    suspected.push(items.suspected);
+		    cured.push(items.cured);
+		    died.push(items.died);
+		});  
+
+		//调用图表展示
+		setTimeout(function(){
+		   var subFunc = '';
+		   initCharts("main3", "疫情总数曲线图", subFunc, date, diagnosed, suspected, cured, died);
+		}, 500);
+        return false;
+	});
+
+
+	//line图表func
+	var initCharts = function(id, title, subFunc, Xdata, diagnosed, suspected, cured, died){
+		// 基于准备好的dom，初始化echarts实例
+		var myChart = echarts.init(document.getElementById(id)); //图表id
+		option = {
+		    backgroundColor: '#f8f8f8', //背景色
+		    title: {
+		        text: title,
+                textStyle: {
+                    color: '#000',
+                    fontSize: 18
+                },
+                itemGap: 5,
+		        subtext: subFunc,
+				subtextStyle: {
+					color: '#333',
+                    fontSize: 13,
+                    rich: {
+				        a: {
+				            color: '#ce0332',
+                    		fontSize: 15
+				        },
+				        b: {
+				            color: '#ff6600',
+                    		fontSize: 15
+				        },
+				        c: {
+				            color: '#20d6ad',
+                    		fontSize: 15
+				        },
+				        d: {
+				            color: 'gray',
+                    		fontSize: 15
+				        },
+				        e: {
+				            color: '#ce0332',
+                    		fontSize: 12
+				        },
+				        f: {
+				            color: '#ff6600',
+                    		fontSize: 12
+				        },
+				        h: {
+				            color: '#20d6ad',
+                    		fontSize: 12
+				        },
+				        i: {
+				            color: 'gray',
+                    		fontSize: 12
+				        }
+				    }
+				},
+				x: 'center'
+		    },
+		    tooltip: {
+		        trigger: 'axis', //axis , item
+		        axisPointer: {
+		            type: 'line', //'line' | 'cross' | 'shadow' | 'none
+		            lineStyle: {
+		                color: '#c9caca',
+		                width: 1,
+		                type: 'dotted'
+		            },
+		            label: {
+		                backgroundColor: '#6a7985'
+		            },
+		        },
+		        x: 'left',
+		        textStyle: {
+		            fontSize: 14
+		        }
+		    },
+		    grid: {
+		        top: '15%',
+		        right: '2%',
+		        bottom: '18%',
+		        left: '5%'
+		    },
+		    legend: {
+		        data: ['确诊','疑似','治愈','死亡'],
+		        x: 'right'
+		    },
+		    xAxis: {
+		        type: 'category',
+		        axisLabel: {
+		            rotate: 45,
+		            interval: 0, //类目间隔 设置为 1，表示(隔一个标签显示一个标签)
+		            textStyle: {
+		                color: '#333',
+		                fontSize: 12
+		            },
+		            formatter: '{value}'
+		        },
+		        axisLine: {
+		            lineStyle: {
+		                color: '#ccc',
+		                 width: 1
+		            }
+		        },
+		        splitLine: {
+		            show: true,
+		            lineStyle: {
+		                color: 'rgba(102,102,102,.1)', //纵向网格线颜色
+		                width: 1,
+		                type: 'dashed'
+		            }
+		        },
+		        axisTick: {
+		            show: true //坐标轴小标记
+		        },
+		        data: Xdata //载入横坐标数据
+		    },
+		    yAxis: {
+		        type: 'value',
+		        axisLabel: {
+		            show: true,
+		            textStyle: {
+		                color: '#333',
+		                fontSize: 12
+		            },
+		            formatter: '{value}'
+		        },
+		        splitNumber: 4, //y轴刻度设置(值越大刻度越小)
+		        axisLine: {
+		            lineStyle: {
+		                color: '#ccc',
+		                width: 1
+		            }
+		        },
+		        splitLine: {
+		            show: true,
+		            lineStyle: {
+		                color: 'rgba(102,102,102,.1)', //横向网格线颜色
+		                width: 1,
+		                type: 'dashed'
+		            }
+		        }
+		    },
+		    color: ['rgb(255, 53, 55)', 'rgb(255, 160, 25)', '#20d6ad', 'rgba(77, 80, 84, 0.7)'],
+		    series: [
+			    {
+			        name: '确诊',
+			        type: 'line', //line				        
+        			//stack: '总量',
+			        symbol: 'pin', //曲线点样式 'emptyCircle', circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow', 'none'
+			        symbolSize: 12, //曲线点大小
+			        label: {
+		                normal: {
+		                    show: true,
+		                    position: 'top'
+		                }
+		            },
+			        lineStyle: {
+			            normal: {
+			                width: 2
+			            }
+			        },
+			        smooth: true, //曲线变平滑 
+			        data: diagnosed //载入数据
+			    },
+			    {
+			        name: '疑似',
+			        type: 'line', //line
+			        symbol: 'pin', //曲线点样式 'emptyCircle', circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow', 'none'
+			        symbolSize: 12, //曲线点大小
+			        label: {
+		                normal: {
+		                    show: true,
+		                    position: 'top'
+		                }
+		            },
+			        lineStyle: {
+			            normal: {
+			                width: 2
+			            }
+			        },
+			        smooth: true, //曲线变平滑 
+			        data: suspected //载入数据
+			    },
+			    {
+			        name: '治愈',
+			        type: 'line', //line
+			        symbol: 'pin', //曲线点样式 'emptyCircle', circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow', 'none'
+			        symbolSize: 12, //曲线点大小
+			        label: {
+		                normal: {
+		                    show: true,
+		                    position: 'top'
+		                }
+		            },
+			        lineStyle: {
+			            normal: {
+			                width: 2
+			            }
+			        },
+			        smooth: true, //曲线变平滑 
+			        data: cured //载入数据
+			    },
+			    {
+			        name: '死亡',
+			        type: 'line', //line
+			        symbol: 'pin', //曲线点样式 'emptyCircle', circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow', 'none'
+			        symbolSize: 12, //曲线点大小
+			        label: {
+		                normal: {
+		                    show: true,
+		                    position: 'top'
+		                }
+		            },
+			        lineStyle: {
+			            normal: {
+			                width: 2
+			            }
+			        },
+			        smooth: true, //曲线变平滑 
+			        data: died //载入数据
+			    }
+		    ]
+		};
+
+		//使用刚指定的配置项和数据显示图表。
+		myChart.setOption(option);
+
+		var app = {
+	        currentIndex: -1,
+        };
+        setInterval(function () {
+	        var dataLen = option.series[0].data.length;
+
+	        // 取消之前高亮的图形
+	        myChart.dispatchAction({
+	          type: 'downplay',
+	          seriesIndex: 0,
+	          dataIndex: app.currentIndex
+	        });
+
+	        app.currentIndex = (app.currentIndex + 1) % dataLen;
+	        //console.log(app.currentIndex);
+	        // 高亮当前图形
+	        myChart.dispatchAction({
+	          type: 'highlight',
+	          seriesIndex: 0,
+	          dataIndex: app.currentIndex,
+	        });
+	        
+	        // 显示 tooltip
+	        myChart.dispatchAction({
+	          type: 'showTip',
+	          seriesIndex: 0,
+	          dataIndex: app.currentIndex
+	        });
+
+        }, 5000);
+
+	}
+
+	var t2 = new Date().getTime();
+    var tms = t2-t1;
+    console.log("js运行 "+"%c"+tms+"%c"+" ms","color:green","color:black");
+
+
+	console.log("\n"
+           + "%c Bowencon" + "\n"
+           + "%c 13671875625" + "\n"
+           + "%c bowencon@qq.com" + "\n"
+           + "\n", "color:#ff6600;font-size:16px", "color:red;font-size:14px", "color:gray;font-size:12px"
+	);
+
+});
+</script>
+</body>
+</html>
