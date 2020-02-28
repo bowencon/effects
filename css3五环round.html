@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="renderer" content="webkit" />
+<!--<meta name="author" content="" />
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,minimal-ui" />-->
+<title>css3 round</title>
+<style type="text/css">
+*{ margin:0; padding:0; list-style:none; outline:none;}
+html,body{line-height:2;}/*--2相当于12px*2的行高--*/
+i,b,em{font-size:12px; font-weight:400;font-style:normal;}
+ul,ol,dl,li,form{ margin:0; padding:0;}
+ul{ list-style:none;}
+a,a img{ text-decoration:none; border:none;}
+a:link{ cursor:pointer;}
+a:hover{text-decoration:none;}
+a:active,a:visited{}
+a:focus, input[type=button],input[type=submit]{outline:none;color:#fff;}
+table{border-collapse:collapse; /*table-layout:fixed; */}
+/*--------------------common↑--------------------------------*/
+.clear{clear:both;height:0px;line-height:0px;font-size:0;overflow:hidden;margin:0;padding:0;}
+body{font-size:12px;font-family:"Simsun","Microsoft YaHei",Verdana,Arial,Helvetica;color:#fff;background:#eee; }
+/*div:before,div:after{display:block;content:'';} 暂时注释掉*/
+/*-css3 round-*/
+.round{width:200px;height:200px;position:relative;  border:1px dotted #ff6600; margin:2%;}
+.loading,.loading2{width:50%;height:30%;border-radius:50%; position:absolute; left:25%;}
+.loading{top:20%; border:5px solid #3a3;border-right:5px solid #fff;border-bottom:5px solid #fff; 
+-webkit-animation:loading 1s infinite linear;
+animation:loading 1s infinite linear;}
+@-webkit-keyframes loading{
+  from {
+    -webkit-transform:rotate(0deg);
+  }
+  to {
+    -webkit-transform:rotate(-360deg);
+  }
+}
+@keyframes loading{
+  from {
+    transform:rotate(0deg);
+  }
+  to {
+    transform:rotate(-360deg);
+  }
+}
+.loading2{bottom:20%; border:5px solid #168;border-right:5px solid #fff;border-bottom:5px solid #fff; 
+-webkit-animation:loading2 1s infinite linear;
+animation:loading2 1s infinite linear;}
+@-webkit-keyframes loading2{
+  from {
+    -webkit-transform:rotate(0deg);
+  }
+  to {
+    -webkit-transform:rotate(360deg);
+  }
+}
+@keyframes loading2{
+  from {
+    transform:rotate(0deg);
+  }
+  to {
+    transform:rotate(360deg);
+  }
+}
+/*--five rings--*/
+.rings_box{width:33.5%;height:18em; margin:2% auto; position:absolute; top:2%; right:32%; border:1px dotted red;}
+.rings{width:8em;height:7.9em;border-width:1em;border-style:solid;border-radius:50%;position:absolute;}
+.one{top:2em;left:2em;border-color:#006BB0;}
+.two{top:2em;left:14em;border-color:#1D1815;}
+.three{top:2em;left:26em;border-color:#DC2F1F;}
+.four{top:6.5em;left:8em;border-color:#EFA90D;}
+.five{top:6.5em;left:20em;border-color:#059341;}
+.one:before,.one:after,
+.two:before,.two:after,
+.three:before,.three:after,
+.four:before,.four:after,
+.five:before,.five:after{content:"";width:8em;height:7.9em;border:1em solid transparent;border-radius:50%;position:absolute; 
+-webkit-animation:loading2 1s infinite linear;
+animation:loading2 1s infinite linear;}  
+.one:after{top:-1em;left:-1em;border-right-color:#006BB0; z-index:10;}
+.two:before{top:-1em;left:-1em;border-left-color:#1D1815;z-index:10;}
+.two:after{top:-1em;left:-1em;border-right-color:#1D1815;z-index:10;}
+.three:before{top:-1em;left:-1em;border-left-color:#DC2F1F;z-index:10;}
+.four:after{top:-1em;left:-1em;border-right-color:#EFA90D;z-index:10;}
+.five:before{top:-1em;left:-1em;border-left-color:#059341;z-index:10;}
+.five:after{top:-1em;left:-1em;border-right-color:#059341;z-index:10;}
+
+/*--spinner--*/
+.spinner{width:80px;height:80px;overflow:hidden;border:1px dotted red;margin:2%;background-color:#ff6600;border-radius:50%; position:relative;
+-webkit-animation:scaleout 2.0s infinite linear;
+animation:scaleout 2.0s infinite linear;} 
+@-webkit-keyframes scaleout{
+  0%{ 
+    -webkit-transform:scale(0.0);
+	  opacity:100;
+  }
+  100%{
+    -webkit-transform:scale(1.0);
+    opacity:0;
+  }
+}
+@keyframes scaleout{
+  0%{ 
+    transform:scale(0.0);
+	  opacity:100;
+  }
+  100%{
+    transform:scale(1.0);
+    opacity:0;
+  }
+}
+
+/*--spring--*/
+.spring{width:80px;height:80px; overflow:hidden;text-align:center; line-height:80px; font-family:'comic sans ms';font-size:2em; color:#666; background:white; border-radius:50%; border:1px dotted red; position:absolute; top:8%; right:10%; color:#ff6600;
+  transition:box-shadow .4s ease-in-out;}
+.spring:hover{ color:white;
+  -webkit-box-shadow:inset 0 0 0 40px #ff6600;
+  box-shadow:inset 0 0 0 40px #ff6600;
+}
+
+/*-css3 clock--*/
+.clock-box{width:100px;height:100px;background:#B61D1D;border:1px dotted red;margin:0 auto;position:relative;top:-100px;}
+.clock{width:43px;height:43px;border-radius:50%;border:7px solid #fff;margin:22% auto;position:relative;}
+.clock::after{content:"";width:7px;height:7px;background:#fafafa;border-radius:50%;position:absolute;top:18px;left:18px;}
+.clock .clock-h{width:5px;height:19px;background-color:#fff;border-radius:2px;position:absolute;top:5px;left:19px;
+  -webkit-transform-origin:2.5px 16.5px;
+  transform-origin:2.5px 16.5px;
+  -webkit-animation:roll-clock 60s steps(3600, end) infinite;
+  animation:roll-clock 60s steps(3600, end) infinite;
+}
+.clock .clock-m{width:5px;height:21px;background-color:#fff;border-radius:2px;position:absolute;top:2.5px;left:18.5px;
+  -webkit-transform-origin:2.5px 19.5px;
+  transform-origin:2.5px 19.5px;
+  -webkit-animation:roll-clock 10s steps(3600, end) infinite;
+  animation:roll-clock 10s steps(3600, end) infinite; 
+}
+.clock .clock-s{width:5px;height:28px;position:absolute;top:-6px;left:19px;
+  -webkit-transform-origin:bottom;
+  transform-origin:bottom;
+  -webkit-animation:roll-clock 10s infinite linear;
+  animation:roll-clock 10s infinite linear; 
+}
+.clock .clock-s::after{content:"";width:5px;height:5px;background-color:#5e5252;border-radius:50%;position:absolute;top:0;left:0;}
+@-webkit-keyframes roll-clock{
+  to{
+	   -webkit-transform:rotate(360deg) translate3d(0, 0, 0);
+  }
+}
+@keyframes roll-clock{
+  to{
+	   transform:rotate(360deg);
+  }
+}
+
+/* 圆圈旋转 */
+.roll{display:block;width:120px;height:120px;color:white;font-size:36px;line-height:3;text-align:center; border:2px dashed red; border-radius:120px; position:absolute; top:36%;right:8%;
+-webkit-transform-origin:50% 50%;
+    transform-origin:50% 50%;
+-webkit-animation:rotateRoll 4s infinite linear;
+    animation:rotateRoll 4s infinite linear;
+}
+@-webkit-keyframes rotateRoll{
+  from{ 
+    -webkit-transform:rotate(0deg);
+  }
+  to{ 
+    -webkit-transform:rotate(360deg);
+  }
+}
+@keyframes rotateRoll{
+  from{ 
+    transform:rotate(0deg);
+  }
+  to{ 
+    transform:rotate(360deg);
+  }
+}
+
+</style>
+<!-- <script src="js/prefixfree.min.js" type="text/javascript" charset="utf-8"></script> -->
+</head>
+<body>
+<div class="round">
+     <div class="loading"></div>
+     <div class="loading2"></div>
+</div>
+
+<div class="rings_box">
+     <div class="rings one"></div>
+     <div class="rings two"></div>
+     <div class="rings three"></div>
+     <div class="rings four"></div>
+     <div class="rings five"></div>
+</div>
+
+<div class="spinner"></div>
+
+<div class="clock-box">
+     <div class="clock">
+          <div class="clock-h"></div>
+          <div class="clock-m"></div>
+          <div class="clock-s"></div>
+     </div>
+</div>
+
+<div class="spring">inset</div>
+
+<div class="roll">R</div>
+
+</body>
+</html>
