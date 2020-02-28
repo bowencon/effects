@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<title>css墓志铭</title>
+<style type="text/css">
+*{ margin:0; padding:0;}
+body{ font-family:Arial, Helvetica, sans-serif,"微软雅黑"; font-size:12px; background:#000;}
+.wrap{ width:400px; height:300px; margin:20px auto; text-align:center;}
+.wrap p{ text-align:center; line-height:30px;}
+.wrap p span{ line-height:30px; }
+.wrap p span.pic{ width:180px; text-align:center; display:block; float:left;font-size:30px; font-weight:700; color:#f1f1f1;}
+.wrap p span.font{ width:200px;text-align:left;display:block; float:right; color:#fff;}
+</style>
+
+</head>
+<body>
+
+<div class="wrap">
+     <p><span class="pic">○</span><span class="font">我有一句话想对你说，画个圈来代替</span></p>
+     <p><span class="pic">○</span><span class="font">一个圈代表你</span></p>
+	 <p><span class="pic">○○</span><span class="font">两个圈代表我</span></p>
+	 <p><span class="pic">◎</span><span class="font">你中有我 我中有你</span></p>
+	 <p><span class="pic">◑◐</span><span class="font">月亮圆了有缺 缺了又圆</span></p>
+	 <p><span class="pic">○◑◐○</span><span class="font">圆圆缺缺 缺缺圆圆</span></p>
+	 <p><span class="pic">☉○⊙◎</span><span class="font">何时是团圆</span></p>
+</div>
+<script type="text/javascript">
+//默认时间范围
+const mydate = new Date();
+var dayStr = mydate.getFullYear() + "/" + (mydate.getMonth()+1) + "/";
+var today = dayStr + mydate.getDate(), 
+	dayBefore = dayStr + (mydate.getDate()-1),
+	dayAfter = dayStr + (mydate.getDate()+1);
+console.log(dayBefore, dayAfter);
+
+</script>
+</body>
+</html>
